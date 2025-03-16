@@ -26,7 +26,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, utils, crane, advisory-db, treefmt-nix, helix, nix-github-actions }:
+  outputs = { self, nixpkgs, utils, crane, rust-overlay, advisory-db, treefmt-nix, helix, nix-github-actions }:
     {
       githubActions = nix-github-actions.lib.mkGithubMatrix {
         checks =
