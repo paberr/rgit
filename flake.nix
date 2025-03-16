@@ -66,6 +66,7 @@
           inherit cargoArtifacts;
           buildInputs = [ rgit-grammar ] ++ commonArgs.buildInputs;
           TREE_SITTER_GRAMMAR_LIB_DIR = rgit-grammar;
+          RUSTFLAGS = "-C target-feature=-avx,-avx2,-fma,-bmi,-bmi2,-tsx,-sha";
         };
         rgit = craneLib.buildPackage (buildArgs // { doCheck = false; });
         treefmt = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
