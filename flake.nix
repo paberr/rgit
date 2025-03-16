@@ -35,9 +35,13 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        craneLib = if name != "x86_64-linux" then crane.mkLib pkgs else (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default.override {
-            targets = [ "x86_64-unknown-linux-musl" ];
-        });
+        craneLib =
+          if system == "x86_64-linux" then
+            (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default.override {
+              targets = [ "x86_64-unknown-linux-musl" ];
+            })
+          else
+            crane.mkLib pkgs;
         cargoOnlySrc = craneLib.cleanCargoSource ./.;
         src = pkgs.lib.fileset.toSource {
           root = ./.;
