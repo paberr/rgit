@@ -35,7 +35,9 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        craneLib = crane.mkLib pkgs;
+        craneLib = if name != "x86_64-linux" then crane.mkLib pkgs else (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default.override {
+            targets = [ "x86_64-unknown-linux-musl" ];
+        });
         cargoOnlySrc = craneLib.cleanCargoSource ./.;
         src = pkgs.lib.fileset.toSource {
           root = ./.;
@@ -60,13 +62,16 @@
           nativeBuildInputs = with pkgs; [ cmake clang ];
           LIBCLANG_PATH = "${pkgs.clang.cc.lib}/lib";
           ROCKSDB_LIB_DIR = "${pkgs.rocksdb}/lib";
+          # Conditionally set CARGO_BUILD_TARGET only for x86_64-linux
+          CARGO_BUILD_TARGET =
+            if system == "x86_64-linux" then "x86_64-unknown-linux-musl"
+            else null;  # Leave it unset for non-x86_64-linux systems
         };
         cargoArtifacts = craneLib.buildDepsOnly (commonArgs // { src = cargoOnlySrc; });
         buildArgs = commonArgs // {
           inherit cargoArtifacts;
           buildInputs = [ rgit-grammar ] ++ commonArgs.buildInputs;
           TREE_SITTER_GRAMMAR_LIB_DIR = rgit-grammar;
-          RUSTFLAGS = "-C target-feature=-avx,-avx2,-fma,-bmi,-bmi2,-tsx,-sha";
         };
         rgit = craneLib.buildPackage (buildArgs // { doCheck = false; });
         treefmt = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
