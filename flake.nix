@@ -4,6 +4,10 @@
 
     crane.url = "github:ipetkov/crane";
     utils.url = "github:numtide/flake-utils";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     treefmt-nix.url = "github:numtide/treefmt-nix";
 
     advisory-db = {
