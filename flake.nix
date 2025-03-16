@@ -42,6 +42,7 @@
           inherit system;
           overlays = [ (import rust-overlay) ];
         };
+        _ = builtins.trace "Current system: ${system}";
         craneLib =
           if system == "x86_64-linux" then
             (crane.mkLib pkgs).overrideToolchain
