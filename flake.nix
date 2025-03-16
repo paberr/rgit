@@ -39,14 +39,15 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
-            inherit system;
-            overlays = [ (import rust-overlay) ];
+          inherit system;
+          overlays = [ (import rust-overlay) ];
         };
         craneLib =
           if system == "x86_64-linux" then
-            (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default.override {
-              targets = [ "x86_64-unknown-linux-musl" ];
-            })
+            (crane.mkLib pkgs).overrideToolchain
+              (p: p.rust-bin.stable.latest.default.override {
+                targets = [ "x86_64-unknown-linux-musl" ];
+              })
           else
             crane.mkLib pkgs;
         cargoOnlySrc = craneLib.cleanCargoSource ./.;
@@ -76,7 +77,7 @@
           # Conditionally set CARGO_BUILD_TARGET only for x86_64-linux
           CARGO_BUILD_TARGET =
             if system == "x86_64-linux" then "x86_64-unknown-linux-musl"
-            else null;  # Leave it unset for non-x86_64-linux systems
+            else null; # Leave it unset for non-x86_64-linux systems
         };
         cargoArtifacts = craneLib.buildDepsOnly (commonArgs // { src = cargoOnlySrc; });
         buildArgs = commonArgs // {
