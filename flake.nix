@@ -47,7 +47,7 @@
           if system == "x86_64-linux" then
             (crane.mkLib pkgs).overrideToolchain
               (p: p.rust-bin.stable.latest.default.override {
-                targets = [ "x86_64-unknown-linux-musl" ];
+                targets = [ "x86_64-unknown-linux-gnu" ];
               })
           else
             crane.mkLib pkgs;
@@ -77,7 +77,7 @@
           ROCKSDB_LIB_DIR = "${pkgs.rocksdb}/lib";
           # Conditionally set CARGO_BUILD_TARGET only for x86_64-linux
           CARGO_BUILD_TARGET =
-            if system == "x86_64-linux" then "x86_64-unknown-linux-musl"
+            if system == "x86_64-linux" then "x86_64-unknown-linux-gnu"
             else null; # Leave it unset for non-x86_64-linux systems
         };
         cargoArtifacts = craneLib.buildDepsOnly (commonArgs // { src = cargoOnlySrc; });
