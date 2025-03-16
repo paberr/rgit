@@ -1,5 +1,8 @@
 FROM nixos/nix:latest AS builder
 
+# Set Rust flags to disable AVX and other unsupported features
+ENV RUSTFLAGS="-C target-feature=-avx,-avx2,-fma,-bmi,-bmi2,-tsx,-sha"
+
 WORKDIR /app
 COPY . .
 
