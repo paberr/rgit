@@ -94,3 +94,6 @@ rsass = "0.28.0"
 
 [package.metadata.deb]
 section = "web"
+
+[patch.crates-io]
+v_htmlescape = { git = "https://github.com/paberr/v_escape", branch = "master" }
